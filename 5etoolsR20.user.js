@@ -71,7 +71,8 @@ var D20plus = function(version) {
 		monsters: {},
 		spells: {},
 		items: {},
-		initiative: {}
+		initiative: {},
+        config: {}
 	};
 
 	d20plus.scripts = [
@@ -130,6 +131,30 @@ var D20plus = function(version) {
 		return "?" + (new Date).getTime();
 	}
 
+    d20plus.loadConfig = function() {
+        var configHandout = d20.Campaign.handouts.models.find(function(handout) { return handout.attributes.name.toLowerCase() == '5etools';});
+        if(configHandout) {
+            configHandout.view.render();
+            configHandout._getLatestBlob("notes", function(notes) {
+              var decoded = decodeURIComponent(notes);
+              var brRemoved = decoded.split("<br>").join("");
+              notes = JSON.parse(brRemoved);
+              d20plus.config = notes;
+              d20plus.log("> Config Loaded");
+
+              /* Alternative code for non-JSON config
+
+                notes = decodeURIComponent(notes).split("<br>");
+                notes.forEach(function(item, index) {
+                    var option = item.split(":");
+                    d20plus.config[option[0]] = option[1];
+                });
+
+              */
+            });
+        }
+    }
+
 	// Window loaded
 	window.onload = function() {
 		window.unwatch("d20");
@@ -144,6 +169,8 @@ var D20plus = function(version) {
 	// Page fully loaded and visible
 	d20plus.Init = function() {
 		d20plus.log("> Init (v" + d20plus.version + ")");
+        d20plus.log("> Reading Config...");
+        d20plus.loadConfig();
 		d20plus.bindDropLocations();
 		// Firebase will deny changes if we're not GM. Better to fail gracefully.
 		if (window.is_gm) {
