@@ -213,9 +213,25 @@ var D20plus = function(version) {
 						var npc = character.attribs.find(function(a) {return a.get("name").toLowerCase() == "npc";});
 						var isNPC = npc ? parseInt(npc.get("current")) : 0;
 						if (isNPC) {
-							var barName = Object.find(d20plus.config, "hp");
-							if (d20plus.config.rollHP && barName) {
+
+							// Set bars
+							$.each(d20plus.config, function(i, v) {
+								var barsList = {bar1:1, bar2:1, bar3:1};
+								if (i in barsList) {
+									var barName = i;
+									var barAttr = v;
+									var barVal = character.attribs.find(function(a) {return a.get("name") == barAttr;}).get("current");
+									e.attributes[barName + "_value"] = barVal;
+									if (d20plus.config[barName + "_max"]) {
+										e.attributes[barName + "_value"] = barVal;
+									};
+								}
+							});
+
+							// Roll HP
+							if (d20plus.config.rollHP && Object.find(d20plus.config, "HP")) {
 								var hpf = character.attribs.find(function(a) {return a.get("name").toLowerCase() == "npc_hpformula";});
+								var barName = Object.find(d20plus.config, "HP");
 								if (hpf) {
 									var hpformula = hpf.get("current");
 									if (hpformula) {
@@ -789,38 +805,6 @@ var D20plus = function(version) {
 							light_radius: lightradius,
 							light_dimradius: lightmin
 						};
-
-						if (d20plus.config.bar1) {
-							console.log("bar1 found");
-							var barAttr = d20plus.config.bar1;
-							console.log("it's " + barAttr);
-							var barVal = barAttr in {"hp":1, "ac":1} ? data[barAttr].match(/^\d+/) : data[barAttr];
-							console.log("val should be" + barVal);
-							defaulttoken["bar1_value"] = barVal;
-							if (d20plus.config.bar1_max) {
-								defaulttoken["bar1_max"] = barVal;
-							};
-						};
-
-						if (d20plus.config.bar2) {
-							var barAttr = d20plus.config.bar2;
-							var barVal = barAttr in {"hp":1, "ac":1} ? data[barAttr].match(/^\d+/) : data[barAttr];
-							defaulttoken["bar2_value"] = barVal;
-							if (d20plus.config.bar2_max) {
-								defaulttoken["bar2_max"] = barVal;
-							};
-						};
-
-						if (d20plus.config.bar3) {
-							var barAttr = d20plus.config.bar3;
-							var barVal = barAttr in {"hp":1, "ac":1} ? data[barAttr].match(/^\d+/) : data[barAttr];
-							defaulttoken["bar3_value"] = barVal;
-							if (d20plus.config.bar3_max) {
-								defaulttoken["bar3_max"] = barVal;
-							};
-						};
-
-						console.log(defaulttoken);
 
 						character.updateBlobs({ avatar: avatar, defaulttoken: JSON.stringify(defaulttoken) });
 						character.save({defaulttoken: (new Date()).getTime()});
