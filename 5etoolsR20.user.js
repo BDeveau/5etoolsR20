@@ -72,7 +72,7 @@ var D20plus = function(version) {
 		spells: {},
 		items: {},
 		initiative: {},
-        config: {}
+		config: {}
 	};
 
 	d20plus.scripts = [
@@ -131,36 +131,36 @@ var D20plus = function(version) {
 		return "?" + (new Date()).getTime();
 	};
 
-    d20plus.loadConfig = function() {
-        var configHandout = d20.Campaign.handouts.models.find(function(handout) { return handout.attributes.name.toLowerCase() == '5etools';});
-        if(configHandout) {
-            configHandout.view.render();
-            configHandout._getLatestBlob("notes", function(notes) {
-            	var decoded = decodeURIComponent(notes);
+	d20plus.loadConfig = function() {
+		var configHandout = d20.Campaign.handouts.models.find(function(handout) { return handout.attributes.name.toLowerCase() == '5etools';});
+		if(configHandout) {
+			configHandout.view.render();
+			configHandout._getLatestBlob("notes", function(notes) {
+				var decoded = decodeURIComponent(notes);
 
-	            notes = decoded.split("<br>");
+				notes = decoded.split("<br>");
 
-	            notes.forEach(function(item, index) {
-	                var option = item.split(":").map(function(o) {
-					  return o.trim();
+				notes.forEach(function(item, index) {
+					var option = item.split(":").map(function(o) {
+						return o.trim();
 					});
-	                d20plus.config[option[0]] = option[1];
-	            });
+					d20plus.config[option[0]] = option[1];
+				});
 
-	            d20plus.log("> Config Loaded:");
-	            d20plus.log(d20plus.config);
+				d20plus.log("> Config Loaded:");
+				d20plus.log(d20plus.config);
 
 
-              /* JSON Version, deemed too difficult for users
+				/* JSON Version, deemed too difficult for users, but maybe useful in the future
 
-              var brRemoved = decoded.split("<br>").join("");
-              notes = JSON.parse(brRemoved);
-              d20plus.config = notes;
-              d20plus.log("> Config Loaded");
-              */
-            });
-        }
-    };
+				var brRemoved = decoded.split("<br>").join("");
+				notes = JSON.parse(brRemoved);
+				d20plus.config = notes;
+				d20plus.log("> Config Loaded");
+				*/
+			});
+		}
+	};
 
 	// Window loaded
 	window.onload = function() {
@@ -176,8 +176,8 @@ var D20plus = function(version) {
 	// Page fully loaded and visible
 	d20plus.Init = function() {
 		d20plus.log("> Init (v" + d20plus.version + ")");
-        d20plus.log("> Reading Config...");
-        d20plus.loadConfig();
+		d20plus.log("> Reading Config...");
+		d20plus.loadConfig();
 		d20plus.bindDropLocations();
 		// Firebase will deny changes if we're not GM. Better to fail gracefully.
 		if (window.is_gm) {
