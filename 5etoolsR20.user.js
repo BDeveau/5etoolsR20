@@ -220,10 +220,13 @@ var D20plus = function(version) {
 								if (i in barsList) {
 									var barName = i;
 									var barAttr = v;
-									var barVal = character.attribs.find(function(a) {return a.get("name") == barAttr;}).get("current");
+									var charAttr = character.attribs.find(function(a) {return a.get("name") == barAttr;});
+									var barVal = charAttr ? charAttr.get("current") : "";
 									e.attributes[barName + "_value"] = barVal;
 									if (d20plus.config[barName + "_max"]) {
-										e.attributes[barName + "_value"] = barVal;
+										e.attributes[barName + "_max"] = barVal;
+									} else {
+										e.attributes[barName + "_max"] = null;
 									};
 								}
 							});
